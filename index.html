@@ -1,0 +1,1653 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COCA CUP 🏆</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="icone.png">
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --surface: #111118;
+            --surface-2: #16161f;
+            --surface-3: #1c1c28;
+            --purple: #8a2be2;
+            --blue: #4169e1;
+            --purple-light: #a855f7;
+            --blue-light: #60a5fa;
+            --grad: linear-gradient(135deg, #8a2be2, #4169e1);
+            --grad-text: linear-gradient(135deg, #a855f7, #60a5fa);
+            --glow-purple: 0 0 20px rgba(138,43,226,0.4);
+            --glow-blue: 0 0 20px rgba(65,105,225,0.4);
+            --border: rgba(138,43,226,0.2);
+            --border-bright: rgba(138,43,226,0.5);
+            --text: #e8e8f0;
+            --text-muted: #6b6b8a;
+            --text-dim: #9898b8;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(138,43,226,0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(138,43,226,0.04) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(ellipse at 30% 20%, rgba(138,43,226,0.06) 0%, transparent 50%),
+                        radial-gradient(ellipse at 70% 80%, rgba(65,105,225,0.06) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+            animation: aurora 12s ease-in-out infinite alternate;
+        }
+
+        @keyframes aurora {
+            from { transform: translate(0,0) rotate(0deg); }
+            to   { transform: translate(30px, 20px) rotate(3deg); }
+        }
+
+        nav {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            background: rgba(10,10,15,0.85);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border);
+            padding: 0 30px; height: 56px;
+            display: flex; align-items: center; justify-content: space-between;
+            gap: 16px;
+        }
+
+        .nav-logo {
+            font-family: 'Orbitron', monospace;
+            font-weight: 900; font-size: 1rem;
+            background: var(--grad-text);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 3px;
+            flex-shrink: 0;
+        }
+
+        .nav-links { display: flex; gap: 6px; list-style: none; }
+        .nav-links a {
+            color: var(--text-dim); text-decoration: none;
+            font-size: 0.75rem; font-weight: 600;
+            letter-spacing: 1px; text-transform: uppercase;
+            padding: 6px 12px; border-radius: 4px;
+            border: 1px solid transparent; transition: all 0.2s;
+        }
+        .nav-links a:hover {
+            color: var(--text);
+            border-color: var(--border-bright);
+            background: rgba(138,43,226,0.1);
+        }
+
+        .nav-right { display: flex; align-items: center; gap: 14px; flex-shrink: 0; }
+
+        /* ===== SEASON SELECTOR (Bootstrap dropdown, tema custom) ===== */
+        .season-select { position: relative; }
+
+        .season-select-btn {
+            display: flex; align-items: center; gap: 8px;
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px 12px;
+            min-height: 40px;
+            cursor: pointer;
+            font-family: 'Exo 2', sans-serif;
+            color: var(--text);
+            transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+        }
+        .season-select-btn:hover,
+        .season-select-btn:focus {
+            border-color: var(--border-bright);
+            background: rgba(138,43,226,0.08);
+            color: var(--text);
+        }
+        .season-select-btn:focus {
+            box-shadow: 0 0 0 3px rgba(138,43,226,0.25);
+            outline: none;
+        }
+        .season-select.show .season-select-btn {
+            border-color: var(--border-bright);
+            box-shadow: var(--glow-purple);
+        }
+
+        .season-select-label {
+            font-size: 0.78rem; font-weight: 700;
+            color: var(--text); letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        .season-select-chevron {
+            width: 14px; height: 14px;
+            flex-shrink: 0;
+            color: var(--text-muted);
+            transition: transform 0.2s;
+        }
+        .season-select.show .season-select-chevron {
+            transform: rotate(180deg);
+            color: var(--purple-light);
+        }
+
+        /* Sobrescreve o dropdown-menu padrão do Bootstrap com o tema escuro */
+        .season-select-menu {
+            min-width: 240px;
+            max-width: min(320px, calc(100vw - 24px));
+            background: var(--surface);
+            border: 1px solid var(--border-bright);
+            border-radius: 10px;
+            box-shadow: 0 12px 32px rgba(0,0,0,0.5), var(--glow-purple);
+            padding: 6px;
+        }
+
+        .season-option {
+            display: flex; align-items: center; justify-content: space-between;
+            gap: 10px;
+            padding: 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            text-decoration: none;
+            border: 1px solid transparent;
+            background: transparent;
+            white-space: normal;
+            transition: background 0.15s, border-color 0.15s;
+        }
+        .season-option:hover,
+        .season-option:focus {
+            background: rgba(138,43,226,0.1);
+            border-color: var(--border);
+        }
+        .season-option-text {
+            display: flex; flex-direction: column; gap: 2px;
+        }
+        .season-option-title {
+            font-size: 0.82rem; font-weight: 700; color: var(--text);
+            letter-spacing: 0.5px;
+        }
+        .season-option-sub {
+            font-family: 'Orbitron', monospace;
+            font-size: 0.55rem; letter-spacing: 1.5px;
+            color: var(--text-muted); text-transform: uppercase;
+        }
+        .season-option.active .season-option-title {
+            background: var(--grad-text);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .season-option-check {
+            width: 16px; height: 16px;
+            color: var(--purple-light);
+            flex-shrink: 0;
+            visibility: hidden;
+        }
+        .season-option.active .season-option-check { visibility: visible; }
+
+        /* Área de toque maior no celular (mínimo recomendado ~44px) */
+        @media (max-width: 700px) {
+            .season-select-btn { min-height: 44px; padding: 9px 12px; }
+            .season-option { padding: 13px 12px; min-height: 44px; }
+        }
+
+        header {
+            position: relative; z-index: 1;
+            padding: 130px 20px 70px;
+            text-align: center; overflow: hidden;
+        }
+
+        .header-badge {
+            display: inline-block;
+            font-family: 'Orbitron', monospace;
+            font-size: 0.65rem; letter-spacing: 4px;
+            color: var(--purple-light);
+            background: rgba(138,43,226,0.12);
+            border: 1px solid rgba(138,43,226,0.3);
+            padding: 6px 18px; border-radius: 100px;
+            margin-bottom: 24px; text-transform: uppercase;
+        }
+
+        h1 {
+            font-family: 'Orbitron', monospace;
+            font-weight: 900;
+            font-size: clamp(2.8rem, 8vw, 5.5rem);
+            background: var(--grad-text);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 4px; line-height: 1;
+            margin-bottom: 12px;
+            filter: drop-shadow(0 0 40px rgba(138,43,226,0.5));
+        }
+
+        .header-sub {
+            color: var(--text-muted); font-size: 0.9rem;
+            letter-spacing: 3px; text-transform: uppercase; font-weight: 600;
+        }
+
+        .header-line {
+            width: 120px; height: 2px;
+            background: var(--grad);
+            margin: 24px auto 0; border-radius: 2px;
+            box-shadow: var(--glow-purple);
+        }
+
+        .container {
+            max-width: 1040px;
+            margin: 0 auto;
+            padding: 0 20px 80px;
+            position: relative; z-index: 1;
+        }
+
+        .section-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px; padding: 32px;
+            margin-bottom: 32px;
+            position: relative; overflow: hidden;
+            transition: border-color 0.3s;
+        }
+
+        .section-card::before {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0;
+            height: 2px; background: var(--grad); opacity: 0.7;
+        }
+
+        .section-card:hover { border-color: var(--border-bright); }
+
+        .section-number {
+            position: absolute; top: 20px; right: 24px;
+            font-family: 'Orbitron', monospace;
+            font-size: 0.6rem; color: var(--border-bright); letter-spacing: 2px;
+        }
+
+        h2 {
+            font-family: 'Orbitron', monospace;
+            font-weight: 700; font-size: 1rem;
+            letter-spacing: 3px; text-transform: uppercase;
+            background: var(--grad-text);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 28px; padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .table-wrap { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; text-align: center; font-size: 0.9rem; }
+        thead tr { background: rgba(138,43,226,0.08); }
+        th {
+            padding: 12px 10px; color: var(--text-muted);
+            font-size: 0.7rem; letter-spacing: 2px;
+            text-transform: uppercase; font-weight: 700;
+            font-family: 'Orbitron', monospace;
+        }
+        td { padding: 13px 10px; border-bottom: 1px solid rgba(255,255,255,0.04); }
+        tbody tr { transition: background 0.15s; }
+        tbody tr:hover { background: rgba(138,43,226,0.06); }
+
+        .team-name { text-align: left; font-weight: 700; letter-spacing: 0.5px; white-space: nowrap; }
+        .rank-indicator { display: inline-flex; align-items: center; gap: 10px; }
+        .rank-bar { width: 3px; height: 16px; border-radius: 2px; flex-shrink: 0; }
+        .rank-qual .rank-bar { background: var(--grad); box-shadow: var(--glow-purple); }
+        .rank-out  .rank-bar { background: var(--text-muted); }
+
+        .pts-cell {
+            font-family: 'Orbitron', monospace; font-weight: 700; font-size: 1rem;
+            background: var(--grad-text);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        .sg-pos { color: #4ade80; font-weight: 700; }
+        .sg-neg { color: #f87171; font-weight: 700; }
+        .sg-zero { color: var(--text-muted); font-weight: 700; }
+
+        .table-footnote {
+            font-size: 0.78rem; color: var(--text-muted);
+            margin-top: 16px; text-align: center;
+            padding-top: 12px; border-top: 1px solid var(--border);
+            letter-spacing: 0.5px;
+        }
+
+        .qual-badge {
+            display: inline-block; font-size: 0.6rem;
+            font-family: 'Orbitron', monospace; letter-spacing: 1px;
+            padding: 2px 7px; border-radius: 3px;
+            background: rgba(138,43,226,0.2);
+            border: 1px solid rgba(138,43,226,0.4);
+            color: var(--purple-light); margin-left: 8px; vertical-align: middle;
+        }
+
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        @media (max-width: 600px) { .stats-grid { grid-template-columns: 1fr; } }
+
+        .stat-panel {
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: 12px; overflow: hidden;
+        }
+
+        .stat-panel-header {
+            padding: 14px 18px;
+            background: rgba(138,43,226,0.1);
+            border-bottom: 1px solid var(--border);
+            font-family: 'Orbitron', monospace;
+            font-size: 0.72rem; letter-spacing: 2px;
+            color: var(--text-dim); text-transform: uppercase;
+        }
+
+        .stat-list { list-style: none; }
+        .stat-item {
+            display: flex; align-items: center;
+            padding: 11px 18px;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            gap: 12px; transition: background 0.15s;
+        }
+        .stat-item:hover { background: rgba(138,43,226,0.05); }
+        .stat-item:last-child { border-bottom: none; }
+        .stat-rank { font-family: 'Orbitron', monospace; font-size: 0.65rem; color: var(--text-muted); width: 18px; text-align: right; flex-shrink: 0; }
+        .stat-name { font-weight: 600; flex: 1; font-size: 0.9rem; }
+        .stat-team { color: var(--text-muted); font-size: 0.75rem; }
+        .stat-value {
+            font-family: 'Orbitron', monospace; font-weight: 700; font-size: 1.05rem;
+            background: var(--grad-text);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .stat-bar-wrap { width: 50px; height: 3px; background: rgba(255,255,255,0.06); border-radius: 2px; flex-shrink: 0; }
+        .stat-bar { height: 100%; border-radius: 2px; background: var(--grad); }
+
+        .round { margin-bottom: 28px; }
+        .round:last-child { margin-bottom: 0; }
+        .round-header { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+        .round-label {
+            font-family: 'Orbitron', monospace; font-size: 0.65rem;
+            letter-spacing: 3px; font-weight: 700; color: var(--text);
+            background: var(--grad); padding: 5px 14px; border-radius: 4px; text-transform: uppercase;
+        }
+        .round-line { flex: 1; height: 1px; background: var(--border); }
+
+        .match {
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: 12px; padding: 20px 24px;
+            margin-bottom: 12px; position: relative;
+            overflow: hidden; transition: border-color 0.2s, transform 0.2s;
+        }
+        .match:hover { border-color: var(--border-bright); transform: translateY(-1px); }
+
+        .match.played::after {
+            content: 'ENCERRADO';
+            position: absolute; top: 12px; right: 14px;
+            font-family: 'Orbitron', monospace; font-size: 0.55rem;
+            letter-spacing: 2px; color: var(--text-muted);
+            border: 1px solid var(--border); padding: 2px 7px; border-radius: 3px;
+        }
+
+        .match.upcoming::after {
+            content: 'A JOGAR';
+            position: absolute; top: 12px; right: 14px;
+            font-family: 'Orbitron', monospace; font-size: 0.55rem;
+            letter-spacing: 2px; color: #4ade80;
+            border: 1px solid rgba(74,222,128,0.3); padding: 2px 7px; border-radius: 3px;
+        }
+
+        .match.wo::after {
+            content: 'W.O.';
+            position: absolute; top: 12px; right: 14px;
+            font-family: 'Orbitron', monospace; font-size: 0.55rem;
+            letter-spacing: 2px; color: #fbbf24;
+            border: 1px solid rgba(251,191,36,0.3); padding: 2px 7px; border-radius: 3px;
+        }
+
+        .scoreboard {
+            display: flex; align-items: center;
+            justify-content: center; gap: 20px; margin-bottom: 14px;
+        }
+        .team-side { flex: 1; text-align: center; }
+        .team-tag {
+            font-family: 'Orbitron', monospace; font-weight: 700;
+            font-size: clamp(0.75rem, 2vw, 1rem); letter-spacing: 1px; color: var(--text);
+        }
+        .score-display { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+        .score-num {
+            font-family: 'Orbitron', monospace; font-weight: 900;
+            font-size: clamp(1.6rem, 4vw, 2.2rem);
+            width: 52px; text-align: center; line-height: 1;
+        }
+        .score-home { color: var(--purple-light); text-shadow: 0 0 20px rgba(168,85,247,0.5); }
+        .score-away { color: var(--blue-light); text-shadow: 0 0 20px rgba(96,165,250,0.4); }
+        .score-sep { font-family: 'Orbitron', monospace; font-weight: 300; font-size: 1.4rem; color: var(--text-muted); }
+        .score-vs {
+            font-family: 'Orbitron', monospace; font-size: 0.8rem;
+            color: var(--text-muted); letter-spacing: 2px;
+            padding: 8px 16px; border: 1px solid var(--border); border-radius: 6px;
+        }
+
+        .scorers-row { display: flex; gap: 8px; font-size: 0.8rem; }
+        .scorers-home, .scorers-away {
+            flex: 1; padding: 8px 12px;
+            background: rgba(255,255,255,0.02);
+            border-radius: 6px; border: 1px solid rgba(255,255,255,0.04);
+        }
+        .scorer-line { display: flex; align-items: baseline; gap: 4px; padding: 2px 0; color: var(--text-dim); }
+        .scorer-icon { font-size: 0.9em; }
+        .scorer-player { font-weight: 600; color: var(--text); }
+        .scorer-assist { color: var(--text-muted); font-size: 0.75em; }
+
+        .squads-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; }
+        .squad-card {
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: 12px; overflow: hidden;
+            transition: border-color 0.2s, transform 0.2s;
+        }
+        .squad-card:hover { border-color: var(--border-bright); transform: translateY(-2px); }
+        .squad-header {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border);
+            font-family: 'Orbitron', monospace; font-weight: 700;
+            font-size: 0.8rem; letter-spacing: 2px; text-align: center;
+            background: var(--grad-text);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .squad-list { list-style: none; padding: 10px 0; }
+        .squad-list li {
+            padding: 5px 16px; font-size: 0.85rem; color: var(--text-dim);
+            border-bottom: 1px solid rgba(255,255,255,0.02);
+            display: flex; align-items: center; gap: 8px; transition: color 0.15s;
+        }
+        .squad-list li:last-child { border-bottom: none; }
+        .squad-list li:hover { color: var(--text); }
+        .squad-list li::before {
+            content: ''; width: 4px; height: 4px; border-radius: 50%;
+            background: var(--grad); flex-shrink: 0;
+        }
+
+        /* ===== BRACKET / FASE FINAL ===== */
+        .bracket-section::before { background: linear-gradient(135deg, #f59e0b, #8a2be2); }
+
+        /* Phase labels row */
+        .bracket-phase-labels {
+            display: flex;
+            justify-content: center;
+            gap: 0;
+            margin-bottom: 12px;
+        }
+        .bracket-phase-label {
+            font-family: 'Orbitron', monospace;
+            font-size: 0.58rem; letter-spacing: 3px;
+            color: var(--text-muted); text-transform: uppercase;
+            text-align: center;
+        }
+        .bracket-phase-label.lbl-sf { width: 190px; }
+        .bracket-phase-label.lbl-conn { width: 56px; }
+        .bracket-phase-label.lbl-final { width: 210px; }
+        .bracket-phase-label.lbl-champ { width: 56px; flex: 1; }
+
+        /* Main bracket container */
+        .bracket-grid {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-x: auto;
+            padding-bottom: 8px;
+        }
+
+        /* Individual team card inside SF */
+        .bk-team {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px 14px;
+            width: 190px;
+            transition: border-color 0.25s, box-shadow 0.25s, transform 0.2s;
+            position: relative;
+            cursor: default;
+        }
+        .bk-team::before {
+            content: '';
+            position: absolute; left: 0; top: 0; bottom: 0;
+            width: 3px; border-radius: 10px 0 0 10px;
+            background: var(--grad); opacity: 0.7;
+        }
+        .bk-team:hover {
+            border-color: var(--border-bright);
+            box-shadow: var(--glow-purple);
+            transform: translateY(-1px);
+        }
+        .bk-team-name {
+            font-family: 'Orbitron', monospace; font-weight: 700;
+            font-size: 0.82rem; letter-spacing: 1px;
+            flex: 1; color: var(--text);
+        }
+        .bk-score {
+            font-family: 'Orbitron', monospace; font-weight: 900;
+            font-size: 1rem;
+            background: var(--grad-text);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            width: 20px; text-align: center;
+        }
+        .bk-score.tbd {
+            background: none;
+            -webkit-text-fill-color: var(--text-muted);
+            font-size: 0.55rem; letter-spacing: 0.5px; line-height: 1;
+        }
+        .bk-seed {
+            font-family: 'Orbitron', monospace; font-size: 0.5rem;
+            color: var(--text-muted); letter-spacing: 1px;
+            flex-shrink: 0;
+        }
+
+        /* Column of two SF matches */
+        .bk-sf-col {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        /* Each SF matchup (2 teams stacked) */
+        .bk-sf-match {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            position: relative;
+        }
+        .bk-sf-match-label {
+            font-family: 'Orbitron', monospace; font-size: 0.5rem;
+            letter-spacing: 2px; color: var(--purple-light);
+            margin-bottom: 4px;
+        }
+
+        /* SVG connector between SF and Final */
+        .bk-connector {
+            flex-shrink: 0;
+        }
+
+        /* Final card */
+        .bk-final-card {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .bk-final-label {
+            font-family: 'Orbitron', monospace; font-size: 0.5rem;
+            letter-spacing: 2px; color: #f59e0b;
+            margin-bottom: 4px; text-align: center;
+        }
+        .bk-team.final {
+            width: 210px;
+            border-color: rgba(245,158,11,0.35);
+            box-shadow: 0 0 20px rgba(245,158,11,0.08);
+        }
+        .bk-team.final::before {
+            background: linear-gradient(180deg, #f59e0b, #8a2be2);
+            opacity: 1;
+        }
+        .bk-team.final:hover {
+            border-color: rgba(245,158,11,0.7);
+            box-shadow: 0 0 32px rgba(245,158,11,0.25);
+        }
+        .bk-team.final .bk-seed {
+            color: rgba(245,158,11,0.7);
+        }
+
+        /* Spacer between sf1 and sf2 */
+        .bk-sf-spacer { height: 44px; }
+
+        /* Trophy + champion */
+        .bk-champ-col {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+            padding-left: 10px;
+        }
+        .bk-trophy {
+            font-size: 2rem;
+            filter: drop-shadow(0 0 14px rgba(245,158,11,0.7));
+            animation: trophyPulse 2.5s ease-in-out infinite;
+            line-height: 1;
+        }
+        @keyframes trophyPulse {
+            0%, 100% { filter: drop-shadow(0 0 12px rgba(245,158,11,0.6)); transform: scale(1); }
+            50% { filter: drop-shadow(0 0 26px rgba(245,158,11,1)); transform: scale(1.1); }
+        }
+        .bk-champ-slot {
+            background: linear-gradient(135deg, rgba(245,158,11,0.08), rgba(138,43,226,0.08));
+            border: 1px solid rgba(245,158,11,0.35);
+            border-radius: 10px;
+            padding: 10px 16px;
+            min-width: 130px;
+        }
+        .bk-champ-slot-label {
+            font-family: 'Orbitron', monospace; font-size: 0.52rem;
+            letter-spacing: 3px; color: #f59e0b; display: block;
+            margin-bottom: 4px;
+        }
+        .bk-champ-slot-name {
+            font-family: 'Orbitron', monospace; font-weight: 900;
+            font-size: 0.95rem; letter-spacing: 2px;
+            background: linear-gradient(135deg, #f59e0b, #a855f7);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        /* Winner highlight in bracket */
+        .bk-team.winner {
+            border-color: rgba(74,222,128,0.5);
+            box-shadow: 0 0 18px rgba(74,222,128,0.15);
+        }
+        .bk-team.winner .bk-team-name { color: #4ade80; }
+        .bk-team.winner .bk-score { -webkit-text-fill-color: #4ade80; background: none; }
+        .bk-pen-note {
+            font-family: 'Orbitron', monospace; font-size: 0.5rem;
+            letter-spacing: 1px; color: #fbbf24;
+            text-align: center; margin-top: 2px;
+        }
+
+        /* Mobile bracket */
+        @media (max-width: 700px) {
+            .bracket-grid { flex-direction: column; align-items: center; gap: 20px; }
+            .bk-connector { display: none; }
+            .bk-team { width: 100%; max-width: 300px; }
+            .bk-team.final { width: 100%; max-width: 300px; }
+            .bk-champ-col { align-items: center; padding-left: 0; }
+            .bk-sf-spacer { height: 20px; }
+            .bracket-phase-labels { display: none; }
+        }
+
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 3px; }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .section-card { animation: fadeUp 0.5s ease both; }
+        .section-card:nth-child(1) { animation-delay: 0.05s; }
+        .section-card:nth-child(2) { animation-delay: 0.1s; }
+        .section-card:nth-child(3) { animation-delay: 0.15s; }
+        .section-card:nth-child(4) { animation-delay: 0.2s; }
+        .section-card:nth-child(5) { animation-delay: 0.25s; }
+        .section-card:nth-child(6) { animation-delay: 0.3s; }
+
+        @media (max-width: 700px) {
+            nav {
+                padding: 8px 12px;
+                flex-wrap: wrap;
+                row-gap: 8px;
+                min-height: 56px;
+                height: auto;
+            }
+            .nav-links { gap: 2px; order: 3; width: 100%; overflow-x: auto; }
+            .nav-links a { padding: 5px 8px; font-size: 0.65rem; }
+            .section-card { padding: 20px 16px; }
+            .season-select-label { font-size: 0.68rem; }
+        }
+
+        @media (max-width: 700px) {
+            header { padding-top: 150px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <span class="nav-logo">COCA CUP</span>
+        <ul class="nav-links">
+            <li><a href="#classificacao">Tabela</a></li>
+            <li><a href="#fasefinal">Final</a></li>
+            <li><a href="#estatisticas">Stats</a></li>
+            <li><a href="#jogos">Jogos</a></li>
+            <li><a href="#elencos">Elencos</a></li>
+        </ul>
+
+        <div class="nav-right">
+            <div class="dropdown season-select" id="seasonSelect">
+                <button class="season-select-btn" id="seasonSelectBtn" type="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                    <span class="season-select-label">Temporada 2025/2026</span>
+                    <svg class="season-select-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end season-select-menu" aria-labelledby="seasonSelectBtn">
+                    <li>
+                        <a class="dropdown-item season-option active" href="index.html">
+                            <div class="season-option-text">
+                                <span class="season-option-title">Temporada 2025/2026</span>
+                                <span class="season-option-sub">Encerrada · Campeão QPD</span>
+                            </div>
+                            <svg class="season-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item season-option" href="season2026_2027.html">
+                            <div class="season-option-text">
+                                <span class="season-option-title">Temporada 2026</span>
+                                <span class="season-option-sub">Nova temporada</span>
+                            </div>
+                            <svg class="season-option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+
+    <header>
+        <div class="header-badge">Temporada 2025/2026</div>
+        <h1>COCA CUP 🏆</h1>
+        <p class="header-sub">Fase Final Encerrada · Campeão: 1° QPD</p>
+        <div class="header-line"></div>
+    </header>
+
+    <div class="container">
+
+        <!-- CLASSIFICAÇÃO -->
+        <section class="section-card" id="classificacao">
+            <span class="section-number">01 / 05</span>
+            <h2>⚡ Tabela de Classificação</h2>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="team-name">Time</th>
+                            <th>PTS</th>
+                            <th>J</th>
+                            <th>V</th>
+                            <th>E</th>
+                            <th>D</th>
+                            <th>GP</th>
+                            <th>GC</th>
+                            <th>SG</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="team-name">
+                                <span class="rank-indicator rank-qual">
+                                    <span class="rank-bar"></span>
+                                    3° GEO
+                                </span>
+                                <span class="qual-badge">SF</span>
+                            </td>
+                            <td class="pts-cell">10</td>
+                            <td>4</td><td>3</td><td>1</td><td>0</td>
+                            <td>14</td><td>8</td>
+                            <td class="sg-pos">+6</td>
+                        </tr>
+                        <tr>
+                            <td class="team-name">
+                                <span class="rank-indicator rank-qual">
+                                    <span class="rank-bar"></span>
+                                    1° QPD
+                                </span>
+                                <span class="qual-badge">SF</span>
+                            </td>
+                            <td class="pts-cell">8</td>
+                            <td>4</td><td>2</td><td>2</td><td>0</td>
+                            <td>10</td><td>8</td>
+                            <td class="sg-pos">+2</td>
+                        </tr>
+                        <tr>
+                            <td class="team-name">
+                                <span class="rank-indicator rank-qual">
+                                    <span class="rank-bar"></span>
+                                    2° PD
+                                </span>
+                                <span class="qual-badge">SF</span>
+                            </td>
+                            <td class="pts-cell">7</td>
+                            <td>4</td><td>2</td><td>1</td><td>1</td>
+                            <td>15</td><td>7</td>
+                            <td class="sg-pos">+8</td>
+                        </tr>
+                        <tr>
+                            <td class="team-name">
+                                <span class="rank-indicator rank-qual">
+                                    <span class="rank-bar"></span>
+                                    1° MED
+                                </span>
+                                <span class="qual-badge">SF</span>
+                            </td>
+                            <td class="pts-cell">3</td>
+                            <td>4</td><td>1</td><td>0</td><td>3</td>
+                            <td>8</td><td>15</td>
+                            <td class="sg-neg">-7</td>
+                        </tr>
+                        <tr>
+                            <td class="team-name">
+                                <span class="rank-indicator rank-out">
+                                    <span class="rank-bar"></span>
+                                    1° PD
+                                </span>
+                            </td>
+                            <td class="pts-cell">0</td>
+                            <td>4</td><td>0</td><td>0</td><td>4</td>
+                            <td>3</td><td>16</td>
+                            <td class="sg-neg">-13</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="table-footnote">🔷 Os 4 primeiros avançam para a Semifinal · Desempate: PTS → SG → GP &nbsp;|&nbsp; SF = Classificado para Semifinal</p>
+        </section>
+
+        <!-- FASE FINAL -->
+        <section class="section-card bracket-section" id="fasefinal">
+            <span class="section-number">02 / 05</span>
+            <h2>🏆 Fase Final</h2>
+
+            <div class="bracket-phase-labels">
+                <div class="bracket-phase-label lbl-sf">Semifinais</div>
+                <div class="bracket-phase-label lbl-conn"></div>
+                <div class="bracket-phase-label lbl-final">Final</div>
+                <div class="bracket-phase-label lbl-champ">Campeão</div>
+            </div>
+
+            <div class="bracket-grid">
+
+                <div class="bk-sf-col">
+
+                    <div class="bk-sf-match">
+                        <div class="bk-sf-match-label">SEMIFINAL 1</div>
+                        <div class="bk-team winner">
+                            <span class="bk-seed">1°</span>
+                            <span class="bk-team-name">3° GEO</span>
+                            <span class="bk-score">4</span>
+                        </div>
+                        <div class="bk-team">
+                            <span class="bk-seed">4°</span>
+                            <span class="bk-team-name">1° MED</span>
+                            <span class="bk-score">0</span>
+                        </div>
+                    </div>
+
+                    <div class="bk-sf-spacer"></div>
+
+                    <div class="bk-sf-match">
+                        <div class="bk-sf-match-label">SEMIFINAL 2</div>
+                        <div class="bk-team winner">
+                            <span class="bk-seed">2°</span>
+                            <span class="bk-team-name">1° QPD</span>
+                            <span class="bk-score">3</span>
+                        </div>
+                        <div class="bk-team">
+                            <span class="bk-seed">3°</span>
+                            <span class="bk-team-name">2° PD</span>
+                            <span class="bk-score">3</span>
+                        </div>
+                        <div class="bk-pen-note">QPD venc. nos pênaltis</div>
+                    </div>
+
+                </div>
+
+                <svg class="bk-connector" width="56" height="282" viewBox="0 0 56 282" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="sfGrad1" x1="0" y1="0" x2="1" y2="0">
+                            <stop offset="0%" stop-color="rgba(138,43,226,0.6)"/>
+                            <stop offset="100%" stop-color="rgba(245,158,11,0.8)"/>
+                        </linearGradient>
+                        <linearGradient id="sfGrad2" x1="0" y1="0" x2="1" y2="0">
+                            <stop offset="0%" stop-color="rgba(65,105,225,0.6)"/>
+                            <stop offset="100%" stop-color="rgba(245,158,11,0.8)"/>
+                        </linearGradient>
+                        <filter id="glow">
+                            <feGaussianBlur stdDeviation="1.5" result="blur"/>
+                            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                        </filter>
+                    </defs>
+                    <line x1="0" y1="65" x2="28" y2="65" stroke="url(#sfGrad1)" stroke-width="1.5"/>
+                    <line x1="0" y1="217" x2="28" y2="217" stroke="url(#sfGrad2)" stroke-width="1.5"/>
+                    <line x1="28" y1="65" x2="28" y2="217" stroke="rgba(245,158,11,0.5)" stroke-width="1.5"/>
+                    <line x1="28" y1="141" x2="56" y2="141" stroke="rgba(245,158,11,0.8)" stroke-width="1.5"/>
+                    <circle cx="28" cy="65"  r="3" fill="rgba(138,43,226,0.9)" filter="url(#glow)"/>
+                    <circle cx="28" cy="217" r="3" fill="rgba(65,105,225,0.9)"  filter="url(#glow)"/>
+                    <circle cx="28" cy="141" r="4" fill="rgba(245,158,11,0.95)" filter="url(#glow)"/>
+                </svg>
+
+                <div class="bk-final-card">
+                    <div class="bk-final-label">⚡ FINAL</div>
+                    <div class="bk-team final">
+                        <span class="bk-seed">VEN</span>
+                        <span class="bk-team-name">3° GEO</span>
+                        <span class="bk-score">3</span>
+                    </div>
+                    <div class="bk-team final winner">
+                        <span class="bk-seed">VEN</span>
+                        <span class="bk-team-name">1° QPD</span>
+                        <span class="bk-score">3</span>
+                    </div>
+                    <div class="bk-pen-note">QPD venc. nos pênaltis</div>
+                </div>
+
+                <svg class="bk-connector" width="40" height="282" viewBox="0 0 40 282" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="champGrad" x1="0" y1="0" x2="1" y2="0">
+                            <stop offset="0%" stop-color="rgba(245,158,11,0.8)"/>
+                            <stop offset="100%" stop-color="rgba(245,158,11,0.3)"/>
+                        </linearGradient>
+                    </defs>
+                    <line x1="0" y1="141" x2="40" y2="141" stroke="url(#champGrad)" stroke-width="1.5" stroke-dasharray="4 3"/>
+                    <circle cx="0" cy="141" r="3" fill="rgba(245,158,11,0.7)"/>
+                </svg>
+
+                <div class="bk-champ-col">
+                    <div class="bk-trophy">🏆</div>
+                    <div class="bk-champ-slot">
+                        <span class="bk-champ-slot-label">CAMPEÃO</span>
+                        <span class="bk-champ-slot-name">1° QPD</span>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ESTATÍSTICAS -->
+        <section class="section-card" id="estatisticas">
+            <span class="section-number">03 / 05</span>
+            <h2>📊 Estatísticas Gerais</h2>
+            <div class="stats-grid">
+
+                <div class="stat-panel">
+                    <div class="stat-panel-header">⚽ Artilheiros</div>
+                    <ul class="stat-list">
+                        <li class="stat-item">
+                            <span class="stat-rank">1</span>
+                            <span class="stat-name">Caio <span class="stat-team">(2° PD)</span></span>
+                            <span class="stat-bar-wrap"><span class="stat-bar" style="width:100%"></span></span>
+                            <span class="stat-value">6</span>
+                        </li>
+                        <li class="stat-item">
+                            <span class="stat-rank">2</span>
+                            <span class="stat-name">Otávio <span class="stat-team">(3° GEO)</span></span>
+                            <span class="stat-bar-wrap"><span class="stat-bar" style="width:62%"></span></span>
+                            <span class="stat-value">4</span>
+                        </li>
+                        <li class="stat-item">
+                            <span class="stat-rank">3</span>
+                            <span class="stat-name">Mendes <span class="stat-team">(2° PD)</span></span>
+                            <span class="stat-bar-wrap"><span class="stat-bar" style="width:50%"></span></span>
+                            <span class="stat-value">3</span>
+                        </li>
+                        <li class="stat-item">
+                            <span class="stat-rank">3</span>
+                            <span class="stat-name">Rodrigo <span class="stat-team">(1° QPD)</span></span>
+                            <span class="stat-bar-wrap"><span class="stat-bar" style="width:50%"></span></span>
+                            <span class="stat-value">3</span>
+                        </li>
+                        <li class="stat-item">
+                            <span class="stat-rank">3</span>
+                            <span class="stat-name">Nathan <span class="stat-team">(1° MED)</span></span>
+                            <span class="stat-bar-wrap"><span class="stat-bar" style="width:50%"></span></span>
+                            <span class="stat-value">3</span>
+                        </li>
+                        <li class="stat-item">
+                            <span class="stat-rank">6</span>
+                            <span class="stat-name">Piva <span class="stat-team">(1° QPD)</span></span>
+                            <span class="stat-bar-wrap"><span class="stat-bar" style="width:25%"></span></span>
+                            <span class="stat-value">2</span>
+                        </li>
+                        <li class="stat-item">
+                            <span class="stat-rank">6</span>
+                            <span class="stat-name">Davi <span class="stat-team">(1° MED)</span></span>
+                            <span class="stat-bar-wrap"><span class="stat-bar" style="width:25%"></span></span>
+                            <span class="stat-value">2</span>
+                        </li>
+                        <li class="stat-item">
+                            <span class="stat-rank">6</span>
+                            <span class="stat-name">Jefte <span class="stat-team">(1° PD)</span></span>
+                            <span class="stat-bar-wrap"><span class="stat-bar" style="width:25%"></span></span>
+                            <span class="stat-value">2</span>
+                        </li>
+                        <li class="stat-item">
+                            <span class="stat-rank">6</span>
+                            <span class="stat-name">Tiago Basso <span class="stat-team">(2° PD)</span></span>
+                            <span class="stat-bar-wrap"><span class="stat-bar" style="width:25%"></span></span>
+                            <span class="stat-value">2</span>
+                        </li>
+                        <li class="stat-item">
+                            <span class="stat-rank">6</span>
+                            <span class="stat-name">Gabriel <span class="stat-team">(3° GEO)</span></span>
+                            <span class="stat-bar-wrap"><span class="stat-bar" style="width:25%"></span></span>
+                            <span class="stat-value">2</span>
+                        </li>
+                        <li class="stat-item">
+                            <span class="stat-rank">11</span>
+                            <span class="stat-name">Bernardo <span class="stat-team">(2° PD)</span></span>
+                            <span class="stat-bar-wrap"><span class="stat-bar" style="width:12%"></span></span>
+                            <span class="stat-value">1</span>
+                        </li>
+                        <li class="stat-item">
+                            <span class="stat-rank">11</span>
+                            <span class="stat-name">Lucas <span class="stat-team">(1° MED)</span></span>
+                            <span class="stat-bar-wrap"><span class="stat-bar" style="width:12%"></span></span>
+                            <span class="stat-value">1</span>
+                        </li>
+                        <li class="stat-item">
+                            <span class="stat-rank">11</span>
+                            <span class="stat-name">Denadai <span class="stat-team">(1° MED)</span></span>
+                            <span class="stat-bar-wrap"><span class="stat-bar" style="width:12%"></span></span>
+                            <span class="stat-value">1</span>
+                        </li>
+                        <li class="stat-item">
+                            <span class="stat-rank">11</span>
+                            <span class="stat-name">Eduardo <span class="stat-team">(3° GEO)</span></span>
+                            <span class="stat-bar-wrap"><span class="stat-bar" style="width:12%"></span></span>
+                            <span class="stat-value">1</span>
+                        </li>
+                        <li class="stat-item">
+                            <span class="stat-rank">11</span>
+                            <span class="stat-name">Heisenberg <span class="stat-team">(3° GEO)</span></span>
+                            <span class="stat-bar-wrap"><span class="stat-bar" style="width:12%"></span></span>
+                            <span class="stat-value">1</span>
+                        </li>
+                        <li class="stat-item">
+                            <span class="stat-rank">11</span>
+                            <span class="stat-name">Japa <span class="stat-team">(3° GEO)</span></span>
+                            <span class="stat-bar-wrap"><span class="stat-bar" style="width:12%"></span></span>
+                            <span class="stat-value">1</span>
+                        </li>
+                        <li class="stat-item">
+                            <span class="stat-rank">11</span>
+                            <span class="stat-name">Moskitão <span class="stat-team">(3° GEO)</span></span>
+                            <span class="stat-bar-wrap"><span class="stat-bar" style="width:12%"></span></span>
+                            <span class="stat-value">1</span>
+                        </li>
+                        <li class="stat-item">
+                            <span class="stat-rank">11</span>
+                            <span class="stat-name">Dolly <span class="stat-team">(1° MED)</span></span>
+                            <span class="stat-bar-wrap"><span class="stat-bar" style="width:12%"></span></span>
+                            <span class="stat-value">1</span>
+                        </li>
+                        <li class="stat-item">
+                            <span class="stat-rank">11</span>
+                            <span class="stat-name">Henrique <span class="stat-team">(1° MED)</span></span>
+                            <span class="stat-bar-wrap"><span class="stat-bar" style="width:12%"></span></span>
+                            <span class="stat-value">1</span>
+                        </li>
+                        <li class="stat-item">
+                            <span class="stat-rank">11</span>
+                            <span class="stat-name">Ronan <span class="stat-team">(1° QPD)</span></span>
+                            <span class="stat-bar-wrap"><span class="stat-bar" style="width:12%"></span></span>
+                            <span class="stat-value">1</span>
+                        </li>
+                        <li class="stat-item">
+                            <span class="stat-rank">11</span>
+                            <span class="stat-name">Bruno <span class="stat-team">(1° QPD)</span></span>
+                            <span class="stat-bar-wrap"><span class="stat-bar" style="width:12%"></span></span>
+                            <span class="stat-value">1</span>
+                        </li>
+                        <li class="stat-item">
+                            <span class="stat-rank">11</span>
+                            <span class="stat-name">Arthur <span class="stat-team">(1° QPD)</span></span>
+                            <span class="stat-bar-wrap"><span class="stat-bar" style="width:12%"></span></span>
+                            <span class="stat-value">1</span>
+                        </li>
+                        <li class="stat-item">
+                            <span class="stat-rank">11</span>
+                            <span class="stat-name">Enzo <span class="stat-team">(1° QPD)</span></span>
+                            <span class="stat-bar-wrap"><span class="stat-bar" style="width:12%"></span></span>
+                            <span class="stat-value">1</span>
+                        </li>
+                        <li class="stat-item">
+                            <span class="stat-rank">11</span>
+                            <span class="stat-name">Samuel <span class="stat-team">(2° PD)</span></span>
+                            <span class="stat-bar-wrap"><span class="stat-bar" style="width:12%"></span></span>
+                            <span class="stat-value">1</span>
+                        </li>
+                        <li class="stat-item">
+                            <span class="stat-rank">11</span>
+                            <span class="stat-name">Landgraf <span class="stat-team">(2° PD)</span></span>
+                            <span class="stat-bar-wrap"><span class="stat-bar" style="width:12%"></span></span>
+                            <span class="stat-value">1</span>
+                        </li>
+                        <li class="stat-item">
+                            <span class="stat-rank">11</span>
+                            <span class="stat-name">Miguel <span class="stat-team">(1° PD)</span></span>
+                            <span class="stat-bar-wrap"><span class="stat-bar" style="width:12%"></span></span>
+                            <span class="stat-value">1</span>
+                        </li>
+                        <li class="stat-item">
+                            <span class="stat-rank">11</span>
+                            <span class="stat-name">Breno <span class="stat-team">(1° PD)</span></span>
+                            <span class="stat-bar-wrap"><span class="stat-bar" style="width:12%"></span></span>
+                            <span class="stat-value">1</span>
+                        </li>
+                        <li class="stat-item">
+                            <span class="stat-rank">11</span>
+                            <span class="stat-name">Ryan <span class="stat-team">(1° PD)</span></span>
+                            <span class="stat-bar-wrap"><span class="stat-bar" style="width:12%"></span></span>
+                            <span class="stat-value">1</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="stat-panel">
+                    <div class="stat-panel-header">👟 Garçons (Assistências)</div>
+                    <ul class="stat-list">
+                        <li class="stat-item">
+                            <span class="stat-rank">1</span>
+                            <span class="stat-name">Tiago Basso <span class="stat-team">(2° PD)</span></span>
+                            <span class="stat-bar-wrap"><span class="stat-bar" style="width:100%"></span></span>
+                            <span class="stat-value">5</span>
+                        </li>
+                        <li class="stat-item">
+                            <span class="stat-rank">2</span>
+                            <span class="stat-name">Caio <span class="stat-team">(2° PD)</span></span>
+                            <span class="stat-bar-wrap"><span class="stat-bar" style="width:86%"></span></span>
+                            <span class="stat-value">4</span>
+                        </li>
+                        <li class="stat-item">
+                            <span class="stat-rank">3</span>
+                            <span class="stat-name">Rodrigo <span class="stat-team">(1° QPD)</span></span>
+                            <span class="stat-bar-wrap"><span class="stat-bar" style="width:57%"></span></span>
+                            <span class="stat-value">4</span>
+                        </li>
+                        <li class="stat-item">
+                            <span class="stat-rank">4</span>
+                            <span class="stat-name">Kenui <span class="stat-team">(3° GEO)</span></span>
+                            <span class="stat-bar-wrap"><span class="stat-bar" style="width:43%"></span></span>
+                            <span class="stat-value">3</span>
+                        </li>
+                        <li class="stat-item">
+                            <span class="stat-rank">5</span>
+                            <span class="stat-name">Vitor <span class="stat-team">(1° MED)</span></span>
+                            <span class="stat-bar-wrap"><span class="stat-bar" style="width:43%"></span></span>
+                            <span class="stat-value">2</span>
+                        </li>
+                        <li class="stat-item">
+                            <span class="stat-rank">6</span>
+                            <span class="stat-name">Denadai <span class="stat-team">(1° MED)</span></span>
+                            <span class="stat-bar-wrap"><span class="stat-bar" style="width:29%"></span></span>
+                            <span class="stat-value">2</span>
+                        </li>
+                        <li class="stat-item">
+                            <span class="stat-rank">6</span>
+                            <span class="stat-name">Dolly <span class="stat-team">(1° MED)</span></span>
+                            <span class="stat-bar-wrap"><span class="stat-bar" style="width:29%"></span></span>
+                            <span class="stat-value">2</span>
+                        </li>
+                        <li class="stat-item">
+                            <span class="stat-rank">6</span>
+                            <span class="stat-name">Davi Miguel (Gordão) <span class="stat-team">(1° MED)</span></span>
+                            <span class="stat-bar-wrap"><span class="stat-bar" style="width:14%"></span></span>
+                            <span class="stat-value">2</span>
+                        </li>
+                        <li class="stat-item">
+                            <span class="stat-rank">8</span>
+                            <span class="stat-name">Moskitão <span class="stat-team">(3° GEO)</span></span>
+                            <span class="stat-bar-wrap"><span class="stat-bar" style="width:14%"></span></span>
+                            <span class="stat-value">1</span>
+                        </li>
+                        <li class="stat-item">
+                            <span class="stat-rank">8</span>
+                            <span class="stat-name">Japa <span class="stat-team">(3° GEO)</span></span>
+                            <span class="stat-bar-wrap"><span class="stat-bar" style="width:14%"></span></span>
+                            <span class="stat-value">1</span>
+                        </li>
+                        <li class="stat-item">
+                            <span class="stat-rank">8</span>
+                            <span class="stat-name">Eduardo <span class="stat-team">(3° GEO)</span></span>
+                            <span class="stat-bar-wrap"><span class="stat-bar" style="width:14%"></span></span>
+                            <span class="stat-value">1</span>
+                        </li>
+                        <li class="stat-item">
+                            <span class="stat-rank">8</span>
+                            <span class="stat-name">Davi <span class="stat-team">(1° MED)</span></span>
+                            <span class="stat-bar-wrap"><span class="stat-bar" style="width:14%"></span></span>
+                            <span class="stat-value">1</span>
+                        </li>
+                        <li class="stat-item">
+                            <span class="stat-rank">8</span>
+                            <span class="stat-name">Ryan <span class="stat-team">(1° PD)</span></span>
+                            <span class="stat-bar-wrap"><span class="stat-bar" style="width:14%"></span></span>
+                            <span class="stat-value">1</span>
+                        </li>
+                        <li class="stat-item">
+                            <span class="stat-rank">8</span>
+                            <span class="stat-name">Enzo <span class="stat-team">(1° QPD)</span></span>
+                            <span class="stat-bar-wrap"><span class="stat-bar" style="width:14%"></span></span>
+                            <span class="stat-value">1</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- JOGOS -->
+        <section class="section-card" id="jogos">
+            <span class="section-number">04 / 05</span>
+            <h2>🗓 Tabela de Jogos</h2>
+
+            <!-- RODADA 1 -->
+            <div class="round">
+                <div class="round-header">
+                    <span class="round-label">Rodada 1</span>
+                    <div class="round-line"></div>
+                </div>
+
+                <div class="match played">
+                    <div class="scoreboard">
+                        <div class="team-side"><div class="team-tag">3° GEO</div></div>
+                        <div class="score-display">
+                            <span class="score-num score-home">4</span>
+                            <span class="score-sep">×</span>
+                            <span class="score-num score-away">2</span>
+                        </div>
+                        <div class="team-side"><div class="team-tag">2° PD</div></div>
+                    </div>
+                    <div class="scorers-row">
+                        <div class="scorers-home">
+                            <div class="scorer-line"><span class="scorer-icon">⚽</span><span class="scorer-player">Otávio</span><span class="scorer-assist"> (x3)</span></div>
+                            <div class="scorer-line"><span class="scorer-icon">⚽</span><span class="scorer-player">Eduardo</span></div>
+                        </div>
+                        <div class="scorers-away">
+                            <div class="scorer-line"><span class="scorer-icon">⚽</span><span class="scorer-player">Arthur</span><span class="scorer-assist"> (gol contra)</span></div>
+                            <div class="scorer-line"><span class="scorer-icon">⚽</span><span class="scorer-player">Mendes</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="match played">
+                    <div class="scoreboard">
+                        <div class="team-side"><div class="team-tag">1° QPD</div></div>
+                        <div class="score-display">
+                            <span class="score-num score-home">3</span>
+                            <span class="score-sep">×</span>
+                            <span class="score-num score-away">1</span>
+                        </div>
+                        <div class="team-side"><div class="team-tag">1° MED</div></div>
+                    </div>
+                    <div class="scorers-row">
+                        <div class="scorers-home">
+                            <div class="scorer-line"><span class="scorer-icon">⚽</span><span class="scorer-player">Piva</span><span class="scorer-assist"> (x2)</span></div>
+                            <div class="scorer-line"><span class="scorer-icon">⚽</span><span class="scorer-player">Ronan</span></div>
+                        </div>
+                        <div class="scorers-away">
+                            <div class="scorer-line"><span class="scorer-icon">⚽</span><span class="scorer-player">Dolly</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RODADA 2 -->
+            <div class="round">
+                <div class="round-header">
+                    <span class="round-label">Rodada 2</span>
+                    <div class="round-line"></div>
+                </div>
+
+                <div class="match played">
+                    <div class="scoreboard">
+                        <div class="team-side"><div class="team-tag">2° PD</div></div>
+                        <div class="score-display">
+                            <span class="score-num score-home">7</span>
+                            <span class="score-sep">×</span>
+                            <span class="score-num score-away">1</span>
+                        </div>
+                        <div class="team-side"><div class="team-tag">1° PD</div></div>
+                    </div>
+                    <div class="scorers-row">
+                        <div class="scorers-home">
+                            <div class="scorer-line"><span class="scorer-icon">⚽</span><span class="scorer-player">Caio</span><span class="scorer-assist"> (x4)</span></div>
+                            <div class="scorer-line"><span class="scorer-icon">⚽</span><span class="scorer-player">Samuel</span></div>
+                            <div class="scorer-line"><span class="scorer-icon">⚽</span><span class="scorer-player">Mendes</span></div>
+                            <div class="scorer-line"><span class="scorer-icon">⚽</span><span class="scorer-player">Landgraf</span></div>
+                        </div>
+                        <div class="scorers-away">
+                            <div class="scorer-line"><span class="scorer-icon">⚽</span><span class="scorer-player">Jefte</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="match played">
+                    <div class="scoreboard">
+                        <div class="team-side"><div class="team-tag">3° GEO</div></div>
+                        <div class="score-display">
+                            <span class="score-num score-home">4</span>
+                            <span class="score-sep">×</span>
+                            <span class="score-num score-away">3</span>
+                        </div>
+                        <div class="team-side"><div class="team-tag">1° MED</div></div>
+                    </div>
+                    <div class="scorers-row">
+                        <div class="scorers-home">
+                            <div class="scorer-line"><span class="scorer-icon">⚽</span><span class="scorer-player">Otávio</span><span class="scorer-assist"> 👟 Moskitão</span></div>
+                            <div class="scorer-line"><span class="scorer-icon">⚽</span><span class="scorer-player">Heisenberg</span><span class="scorer-assist"> 👟 Japa</span></div>
+                            <div class="scorer-line"><span class="scorer-icon">⚽</span><span class="scorer-player">Japa</span></div>
+                            <div class="scorer-line"><span class="scorer-icon">⚽</span><span class="scorer-player">Moskitão</span></div>
+                        </div>
+                        <div class="scorers-away">
+                            <div class="scorer-line"><span class="scorer-icon">⚽</span><span class="scorer-player">Henrique</span><span class="scorer-assist"> 👟 Dolly</span></div>
+                            <div class="scorer-line"><span class="scorer-icon">⚽</span><span class="scorer-player">Davi</span><span class="scorer-assist"> (x2)</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RODADA 3 -->
+            <div class="round">
+                <div class="round-header">
+                    <span class="round-label">Rodada 3</span>
+                    <div class="round-line"></div>
+                </div>
+
+                <div class="match played">
+                    <div class="scoreboard">
+                        <div class="team-side"><div class="team-tag">2° PD</div></div>
+                        <div class="score-display">
+                            <span class="score-num score-home">5</span>
+                            <span class="score-sep">×</span>
+                            <span class="score-num score-away">1</span>
+                        </div>
+                        <div class="team-side"><div class="team-tag">1° MED</div></div>
+                    </div>
+                    <div class="scorers-row">
+                        <div class="scorers-home">
+                            <div class="scorer-line"><span class="scorer-icon">⚽</span><span class="scorer-player">Caio</span><span class="scorer-assist"> (x2) 👟 Tiago (x2)</span></div>
+                            <div class="scorer-line"><span class="scorer-icon">⚽</span><span class="scorer-player">Tiago</span><span class="scorer-assist"> (x2) 👟 Caio (x2)</span></div>
+                            <div class="scorer-line"><span class="scorer-icon">⚽</span><span class="scorer-player">Mendes</span></div>
+                        </div>
+                        <div class="scorers-away">
+                            <div class="scorer-line"><span class="scorer-icon">⚽</span><span class="scorer-player">Nathan</span><span class="scorer-assist"> 👟 Vitor</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="match played">
+                    <div class="scoreboard">
+                        <div class="team-side"><div class="team-tag">1° QPD</div></div>
+                        <div class="score-display">
+                            <span class="score-num score-home">3</span>
+                            <span class="score-sep">×</span>
+                            <span class="score-num score-away">3</span>
+                        </div>
+                        <div class="team-side"><div class="team-tag">3° GEO</div></div>
+                    </div>
+                    <div class="scorers-row">
+                        <div class="scorers-home">
+                            <div class="scorer-line"><span class="scorer-icon">⚽</span><span class="scorer-player">Rodrigo</span><span class="scorer-assist"> (x2) 👟 Rodrigo</span></div>
+                            <div class="scorer-line"><span class="scorer-icon">⚽</span><span class="scorer-player">Arthur</span></div>
+                        </div>
+                        <div class="scorers-away">
+                            <div class="scorer-line"><span class="scorer-icon">⚽</span><span class="scorer-player">Gabriel</span><span class="scorer-assist"> (x2)</span></div>
+                            <div class="scorer-line"><span class="scorer-icon">⚽</span><span class="scorer-player">Otávio</span><span class="scorer-assist"> 👟 Eduardo</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RODADA 4 -->
+            <div class="round">
+                <div class="round-header">
+                    <span class="round-label">Rodada 4</span>
+                    <div class="round-line"></div>
+                </div>
+
+                <div class="match played">
+                    <div class="scoreboard">
+                        <div class="team-side"><div class="team-tag">1° PD</div></div>
+                        <div class="score-display">
+                            <span class="score-num score-home">2</span>
+                            <span class="score-sep">×</span>
+                            <span class="score-num score-away">3</span>
+                        </div>
+                        <div class="team-side"><div class="team-tag">1° QPD</div></div>
+                    </div>
+                    <div class="scorers-row">
+                        <div class="scorers-home">
+                            <div class="scorer-line"><span class="scorer-icon">⚽</span><span class="scorer-player">Miguel</span><span class="scorer-assist"> 👟 Ryan</span></div>
+                            <div class="scorer-line"><span class="scorer-icon">⚽</span><span class="scorer-player">Jefte</span></div>
+                        </div>
+                        <div class="scorers-away">
+                            <div class="scorer-line"><span class="scorer-icon">⚽</span><span class="scorer-player">Enzo</span></div>
+                            <div class="scorer-line"><span class="scorer-icon">⚽</span><span class="scorer-player">Rodrigo</span><span class="scorer-assist"> 👟 Enzo</span></div>
+                            <div class="scorer-line"><span class="scorer-icon">⚽</span><span class="scorer-player">Ryan</span><span class="scorer-assist"> (gol contra)</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RODADA 5 -->
+            <div class="round">
+                <div class="round-header">
+                    <span class="round-label">Rodada 5</span>
+                    <div class="round-line"></div>
+                </div>
+
+                <div class="match wo played">
+                    <div class="scoreboard">
+                        <div class="team-side"><div class="team-tag">3° GEO</div></div>
+                        <div class="score-display">
+                            <span class="score-num score-home">3</span>
+                            <span class="score-sep">×</span>
+                            <span class="score-num score-away">0</span>
+                        </div>
+                        <div class="team-side"><div class="team-tag">1° PD</div></div>
+                    </div>
+                    <div class="scorers-row">
+                        <div class="scorers-home">
+                            <div class="scorer-line"><span class="scorer-icon">ℹ️</span><span class="scorer-assist">Vitória por W.O. — sem gols atribuídos</span></div>
+                        </div>
+                        <div class="scorers-away">
+                            <div class="scorer-line"><span class="scorer-icon">ℹ️</span><span class="scorer-assist">Ausente</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="match played">
+                    <div class="scoreboard">
+                        <div class="team-side"><div class="team-tag">1° MED</div></div>
+                        <div class="score-display">
+                            <span class="score-num score-home">3</span>
+                            <span class="score-sep">×</span>
+                            <span class="score-num score-away">0</span>
+                        </div>
+                        <div class="team-side"><div class="team-tag">1° PD</div></div>
+                    </div>
+                    <div class="scorers-row">
+                        <div class="scorers-home">
+                            <div class="scorer-line"><span class="scorer-icon">⚽</span><span class="scorer-player">Lucas</span></div>
+                            <div class="scorer-line"><span class="scorer-icon">⚽</span><span class="scorer-player">Denadai</span></div>
+                            <div class="scorer-line"><span class="scorer-icon">⚽</span><span class="scorer-player">Nathan</span><span class="scorer-assist"> 👟 Vitor</span></div>
+                            <div class="scorer-line" style="margin-top:4px;"><span class="scorer-icon">👟</span><span class="scorer-assist">Davi Miguel (Gordão)</span></div>
+                        </div>
+                        <div class="scorers-away">
+                            <div class="scorer-line"><span class="scorer-icon">ℹ️</span><span class="scorer-assist">Sem gols</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="match played">
+                    <div class="scoreboard">
+                        <div class="team-side"><div class="team-tag">2° PD</div></div>
+                        <div class="score-display">
+                            <span class="score-num score-home">1</span>
+                            <span class="score-sep">×</span>
+                            <span class="score-num score-away">1</span>
+                        </div>
+                        <div class="team-side"><div class="team-tag">1° QPD</div></div>
+                    </div>
+                    <div class="scorers-row">
+                        <div class="scorers-home">
+                            <div class="scorer-line"><span class="scorer-icon">⚽</span><span class="scorer-player">Bernardo</span></div>
+                        </div>
+                        <div class="scorers-away">
+                            <div class="scorer-line"><span class="scorer-icon">⚽</span><span class="scorer-player">Bruno</span><span class="scorer-assist"> 👟 Vitor</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SEMIFINAIS -->
+            <div class="round">
+                <div class="round-header">
+                    <span class="round-label">Semifinais</span>
+                    <div class="round-line"></div>
+                </div>
+
+                <div class="match played">
+                    <div class="scoreboard">
+                        <div class="team-side"><div class="team-tag">3° GEO</div></div>
+                        <div class="score-display">
+                            <span class="score-num score-home">4</span>
+                            <span class="score-sep">×</span>
+                            <span class="score-num score-away">0</span>
+                        </div>
+                        <div class="team-side"><div class="team-tag">1° MED</div></div>
+                    </div>
+                    <div class="scorers-row">
+                        <div class="scorers-home">
+                            <div class="scorer-line"><span class="scorer-icon">ℹ️</span><span class="scorer-assist">GEO avança à final</span></div>
+                        </div>
+                        <div class="scorers-away">
+                            <div class="scorer-line"><span class="scorer-icon">ℹ️</span><span class="scorer-assist">Eliminado</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="match played">
+                    <div class="scoreboard">
+                        <div class="team-side"><div class="team-tag">1° QPD</div></div>
+                        <div class="score-display">
+                            <span class="score-num score-home">3</span>
+                            <span class="score-sep">×</span>
+                            <span class="score-num score-away">3</span>
+                        </div>
+                        <div class="team-side"><div class="team-tag">2° PD</div></div>
+                    </div>
+                    <div class="scorers-row">
+                        <div class="scorers-home">
+                            <div class="scorer-line"><span class="scorer-icon">ℹ️</span><span class="scorer-assist">QPD vence nos pênaltis e avança à final</span></div>
+                        </div>
+                        <div class="scorers-away">
+                            <div class="scorer-line"><span class="scorer-icon">ℹ️</span><span class="scorer-assist">Eliminado nos pênaltis</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FINAL -->
+            <div class="round">
+                <div class="round-header">
+                    <span class="round-label">Final 🏆</span>
+                    <div class="round-line"></div>
+                </div>
+
+                <div class="match played">
+                    <div class="scoreboard">
+                        <div class="team-side"><div class="team-tag">3° GEO</div></div>
+                        <div class="score-display">
+                            <span class="score-num score-home">3</span>
+                            <span class="score-sep">×</span>
+                            <span class="score-num score-away">3</span>
+                        </div>
+                        <div class="team-side"><div class="team-tag">1° QPD</div></div>
+                    </div>
+                    <div class="scorers-row">
+                        <div class="scorers-home">
+                            <div class="scorer-line"><span class="scorer-icon">ℹ️</span><span class="scorer-assist">Vice-campeão</span></div>
+                        </div>
+                        <div class="scorers-away">
+                            <div class="scorer-line"><span class="scorer-icon">🏆</span><span class="scorer-assist">QPD vence nos pênaltis — CAMPEÃO!</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ELENCOS -->
+        <section class="section-card" id="elencos">
+            <span class="section-number">05 / 05</span>
+            <h2>👥 Elencos Inscritos</h2>
+            <div class="squads-grid">
+
+                <div class="squad-card">
+                    <div class="squad-header">2° PD</div>
+                    <ul class="squad-list">
+                        <li>Gabigol</li><li>Thiago</li><li>Bernardo</li>
+                        <li>Mendes</li><li>Jão</li><li>Adati</li>
+                        <li>Natan</li><li>Caio</li><li>Mano Brawl</li>
+                        <li>Samuel</li><li>Landgraf</li><li>Tiago</li>
+                    </ul>
+                </div>
+
+                <div class="squad-card">
+                    <div class="squad-header">3° GEO</div>
+                    <ul class="squad-list">
+                        <li>Colo Colo</li><li>Yuri</li><li>Davi</li>
+                        <li>Japa</li><li>Arthur</li><li>Thiago (Moskitão)</li>
+                        <li>Kenui</li><li>Paparotte</li><li>Eduardo</li>
+                        <li>Gabriel</li><li>Heinzenberg</li><li>Otávio</li>
+                    </ul>
+                </div>
+
+                <div class="squad-card">
+                    <div class="squad-header">1° QPD</div>
+                    <ul class="squad-list">
+                        <li>Bruno</li><li>Rodrigo</li><li>Enzo</li>
+                        <li>Mauro</li><li>Leonardo</li><li>Karolayne</li>
+                        <li>Rafael</li><li>Nicolas</li><li>Vitor</li>
+                        <li>Ronan</li><li>Piva</li>
+                    </ul>
+                </div>
+
+                <div class="squad-card">
+                    <div class="squad-header">1° MED</div>
+                    <ul class="squad-list">
+                        <li>Julio</li><li>Vitor</li><li>Lucas</li>
+                        <li>Zullo</li><li>Denadai</li><li>Dolynho (Dolly)</li>
+                        <li>Davi (Gordão)</li><li>Querubim</li><li>Nathan</li>
+                        <li>Bruno</li><li>Henrique</li>
+                    </ul>
+                </div>
+
+                <div class="squad-card">
+                    <div class="squad-header">1° PD</div>
+                    <ul class="squad-list">
+                        <li>Gabriel Manzatto</li><li>Murilo</li><li>Molina</li>
+                        <li>Ryan</li><li>Breno</li><li>Heitor</li>
+                        <li>Miguel</li><li>Joao Pedro</li><li>Pedro H.</li>
+                        <li>Bruno Jefte</li>
+                    </ul>
+                </div>
+
+            </div>
+        </section>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
